@@ -1,0 +1,23 @@
+
+# Deep Learning
+tensorflow
+numpy
+pandas
+
+# Satellite Data Processing
+h5py
+
+# Data Science and Visualization
+scikit-learn
+matplotlib
+pillow
+
+# FastAPI Backend
+fastapi
+uvicorn[standard]
+python-multipart
+jinja2
+
+# HTTP Requests and API Integration
+requests
+httpx
