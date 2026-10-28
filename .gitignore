@@ -1,0 +1,23 @@
+# Ignore dataset files
+data/TestData/*
+data/TrainData/*
+data/ValidData/*
+
+# Keep dataset folder placeholders
+!data/TestData/.gitkeep
+!data/TrainData/.gitkeep
+!data/ValidData/.gitkeep
+!data/.gitkeep
+
+# Ignore secrets
+.env
+.env.*
+.venv
+
+# Allow a safe example environment file
+!.env.example
+
+# Ignore trained models
+models/*.keras
+models/*.h5
+models/*.hdf5*.keras

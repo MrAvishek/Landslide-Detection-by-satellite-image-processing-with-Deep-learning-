@@ -1,0 +1,116 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraScan | Landslide Intelligence</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand"><span class="brand-icon">⌁</span> TerraScan</div>
+        <p class="side-label">WORKSPACE</p>
+        <a class="nav-item active" href="/">◫ &nbsp; Overview</a>
+        <a class="nav-item" href="#explore">◎ &nbsp; Explore locations</a>
+        <a class="nav-item" href="#analysis">◈ &nbsp; Image analysis</a>
+        <div class="sidebar-bottom">
+            <span class="status-dot"></span> API connection
+            <small id="api-status">Checking status…</small>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">EARTH OBSERVATION PLATFORM</p>
+                <h1>Landslide Intelligence</h1>
+                <p class="subtitle">Explore terrain. Analyze imagery. Identify potential landslides.</p>
+            </div>
+            <div class="live-pill"><span class="status-dot"></span> Local system</div>
+        </header>
+
+        <section class="stats">
+            <article class="stat-card">
+                <span class="stat-icon">⌖</span>
+                <p>Location</p>
+                <h2 id="location-stat">Not selected</h2>
+                <small>Search an area to begin</small>
+            </article>
+            <article class="stat-card">
+                <span class="stat-icon">▧</span>
+                <p>Imagery</p>
+                <h2 id="image-stat">No image</h2>
+                <small>Satellite source or local upload</small>
+            </article>
+            <article class="stat-card">
+                <span class="stat-icon">◈</span>
+                <p>Analysis</p>
+                <h2 id="analysis-stat">Not started</h2>
+                <small>Requires compatible model input</small>
+            </article>
+        </section>
+
+        <section class="workspace" id="explore">
+            <article class="panel map-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">GEOSPATIAL EXPLORER</p>
+                        <h2>Explore an area</h2>
+                    </div>
+                    <span class="tag">Interactive map</span>
+                </div>
+                <form id="location-form" class="search-row">
+                    <input id="location-input" type="text"
+                           placeholder="Search a place, e.g. Darjeeling, India"
+                           autocomplete="off" required>
+                    <button type="submit">Search</button>
+                </form>
+                <p id="location-message" class="message">Search for a location or click the map.</p>
+                <div id="map"></div>
+                <div class="map-footer">
+                    <span>© OpenStreetMap contributors</span>
+                    <span id="coordinates">No coordinates selected</span>
+                </div>
+            </article>
+
+            <article class="panel analysis-panel" id="analysis">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">MODEL WORKSPACE</p>
+                        <h2>Analyze imagery</h2>
+                    </div>
+                    <span class="tag">Image input</span>
+                </div>
+                <div id="drop-area" class="drop-area">
+                    <div class="upload-icon">↑</div>
+                    <h3>Upload satellite imagery</h3>
+                    <p>Select a supported image to preview it.</p>
+                    <label for="image-input" class="secondary-button">Choose image</label>
+                    <input id="image-input" type="file" accept="image/*,.h5,.hdf5" hidden>
+                    <small>Image preview is available; model prediction requires compatible 26-channel data.</small>
+                </div>
+
+                <div id="preview-area" class="preview-area hidden">
+                    <img id="image-preview" alt="Selected image preview">
+                    <p id="file-name"></p>
+                    <button id="remove-image" class="secondary-button" type="button">Remove image</button>
+                </div>
+
+                <div class="analysis-note">
+                    <strong>Prediction requirements</strong>
+                    <p>The model uses 26 channels, including multispectral bands, derived indices, slope and elevation. A regular map screenshot alone is not sufficient.</p>
+                </div>
+                <button id="predict-button" class="primary-button" disabled>Run landslide prediction</button>
+                <p id="prediction-message" class="message">Prediction will be enabled after the model API is integrated.</p>
+            </article>
+        </section>
+
+        <footer>TerraScan · Landslide segmentation research prototype</footer>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
