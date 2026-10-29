@@ -1,55 +1,46 @@
+# app/services/model_inference.py
 
 from pathlib import Path
 
 import numpy as np
 import tensorflow as tf
 
-from app.services.inference_preprocessing import (
-    prepare_inference_features,
-    normalize_inference_features,
-)
+from app.services.preprocessing import create_features
+from app.services.inference_preprocessing import normalize_inference_features
 
-BASE_DIR = Path(__file__).resolve().parents[2]
-MODEL_PATH = BASE_DIR / "models" / "best_landslide_unet.keras"
-STATS_PATH = BASE_DIR / "models" / "normalization_stats_26ch.npz"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+MODEL_PATH = PROJECT_ROOT / "models" / "best_landslide_unet.keras"
 
-# Load once when this module is imported.
 model = tf.keras.models.load_model(
     MODEL_PATH,
     compile=False,
 )
 
 
-def predict_landslide(
-    bbox: list[float],
-    time_from: str,
-    time_to: str,
-) -> np.ndarray:
-    """Return a 128x128 landslide probability mask."""
+def predict_image(image: np.ndarray) -> np.ndarray:
+    """Predict a 128x128 landslide probability mask from a raw 14-channel image."""
+    image = np.asarray(image, dtype=np.float32)
 
-    features = prepare_inference_features(
-        bbox=bbox,
-        time_from=time_from,
-        time_to=time_to,
-    )
+    if image.shape != (128, 128, 14):
+        raise ValueError(
+            f"Expected raw image shape (128, 128, 14); got {image.shape}."
+        )
 
-    features = normalize_inference_features(
-        features,
-        stats_path=STATS_PATH,
-    )
+    features = create_features(image)
+    features = normalize_inference_features(features)
 
-    # Model expects a batch: (1, 128, 128, 26).
     batch = np.expand_dims(features, axis=0)
-
     predictions = model.predict(batch, verbose=0)
 
-    # The model has coarse_mask, medium_mask, and final_mask outputs.
     if isinstance(predictions, dict):
+        if "final_mask" not in predictions:
+            raise ValueError("Model output does not contain 'final_mask'.")
         mask = predictions["final_mask"][0, ..., 0]
     else:
-        mask = predictions[model.output_names.index("final_mask")][0, ..., 0]
+        output_index = model.output_names.index("final_mask")
+        mask = predictions[output_index][0, ..., 0]
 
-    if not np.isfinite(mask).all():
-        raise ValueError("Model returned non-finite predictions.")
+    if mask.shape != (128, 128) or not np.isfinite(mask).all():
+        raise ValueError("Model returned an invalid segmentation mask.")
 
-    return np.clip(mask, 0.0, 1.0)
+    return np.clip(mask, 0.0, 1.0).astype(np.float32)

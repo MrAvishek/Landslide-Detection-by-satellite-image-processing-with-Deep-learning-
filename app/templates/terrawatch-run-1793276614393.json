@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-10-29T12:23:34.391Z",
+  "input_file": "image_11.h5",
+  "reference_mask_file": "mask_11.h5",
+  "threshold": 0.7,
+  "inference_duration_ms": 143,
+  "prediction_summary": {
+    "output_shape": "128 × 128",
+    "positive_pixels": "34",
+    "positive_share": "0.21%"
+  },
+  "evaluation_metrics": null
+}

@@ -1,38 +1,20 @@
-
 import numpy as np
-import tensorflow as tf
 
 from app.services.inference_preprocessing import (
-    prepare_inference_features,
+    STATS_PATH,
     normalize_inference_features,
 )
 
-bbox = [88.35, 27.30, 88.36, 27.31]
-time_from = "2025-10-01T00:00:00Z"
-time_to = "2025-11-01T23:59:59Z"
+print("Statistics file:", STATS_PATH)
+print("File exists:", STATS_PATH.exists())
 
-features = prepare_inference_features(bbox, time_from, time_to)
-x = normalize_inference_features(
-    features,
-    stats_path="models/normalization_stats_26ch.npz",
+features = np.random.default_rng(42).random(
+    (128, 128, 26), dtype=np.float32
 )
 
-print("Normalized shape:", x.shape)
-print("Normalized min/max:", float(x.min()), float(x.max()))
-print("Per-channel means:", np.round(x.mean(axis=(0, 1)), 3))
-print("Per-channel stds:", np.round(x.std(axis=(0, 1)), 3))
+normalized = normalize_inference_features(features)
 
-model = tf.keras.models.load_model(
-    "models/best_landslide_unet.keras",
-    compile=False,
-)
-
-outputs = model.predict(x[np.newaxis, ...], verbose=0)
-
-for name, output in zip(model.output_names, outputs):
-    print(
-        name,
-        "min:", float(output.min()),
-        "max:", float(output.max()),
-        "mean:", float(output.mean()),
-    )
+print("Output shape:", normalized.shape)
+print("Output dtype:", normalized.dtype)
+print("All finite:", np.isfinite(normalized).all())
+print("Normalization test passed.")

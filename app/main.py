@@ -1,3 +1,4 @@
+
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -6,6 +7,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.routes.health import router as health_router
+from app.routes.prediction import router as prediction_router
+# from app.routes.evaluation import router as evaluation_router
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -21,9 +24,13 @@ app.mount(
     name="static",
 )
 
-templates = Jinja2Templates(directory=BASE_DIR / "templates")
+templates = Jinja2Templates(
+    directory=BASE_DIR / "templates"
+)
 
 app.include_router(health_router, prefix="/api/v1")
+app.include_router(prediction_router, prefix="/api/v1")
+# app.include_router(evaluation_router, prefix="/api/v1")
 
 
 @app.get("/", response_class=HTMLResponse)

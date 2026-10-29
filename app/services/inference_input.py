@@ -1,11 +1,7 @@
 
 import numpy as np
 
-from app.services.satellite import (
-    fetch_sentinel2_bands,
-    fetch_dem,
-    calculate_slope,
-)
+
 
 
 def build_model_input(
